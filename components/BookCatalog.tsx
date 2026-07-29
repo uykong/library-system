@@ -2,7 +2,8 @@
 "use client";
 
 // Notice we added `useEffect` to load data when the page opens
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; 
 // We are importing our new real database functions!
 import { getBooks, addBook, borrowBook, returnBook, deleteBook } from "../lib/actions";
 
@@ -28,15 +29,23 @@ export default function BookCatalog() {
   });
   const [userRole, setUserRole] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const router = useRouter();
 
   // NEW: Fetch books from Supabase when the component loads
   useEffect(() => {
     // 1. Grab their role (Student vs Librarian) to show/hide buttons
     const role = localStorage.getItem("userRole");
-    setUserRole(role);
+    
 
     // 2. Grab their specific ID to put on the borrow receipt
     const id = localStorage.getItem("userId");
+
+    if (!id) {
+      router.push("/login");
+      return; // Stop the function here so it doesn't bother loading books
+    }
+
+    setUserRole(role);
     setUserId(id);
 
     async function loadBooks() {
