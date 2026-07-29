@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String   
+  role          String         @default("student")
+  createdAt     DateTime       @default(now())
+  borrowedBooks BorrowRecord[] // The connection to their history!
+}
+
+model Book {
+  id              String         @id @default(uuid())
+  title           String
+  author          String
+  isbn            String         @unique
+  totalCopies     Int
+  availableCopies Int
+  createdAt       DateTime       @default(now())
+  borrowHistory   BorrowRecord[] // The connection to who took it!
+}
+
+// NEW: The Bridge Table
+model BorrowRecord {
+  id         String    @id @default(uuid())
+  userId     String
+  bookId     String
+  borrowedAt DateTime  @default(now())
+  returnedAt DateTime? // Optional (null) until they actually return it
+  status     String    @default("ACTIVE") // Can be ACTIVE or RETURNED
+
+  // These lines physically lock the tables together
+  user       User      @relation(fields: [userId], references: [id])
+  book       Book      @relation(fields: [bookId], references: [id])
+}
