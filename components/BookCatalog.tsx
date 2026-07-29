@@ -57,6 +57,15 @@ export default function BookCatalog() {
     loadBooks();
   }, [router]);
 
+  const handleLogout = () => {
+    // 1. Shred the saved ID and Role
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userRole");
+    
+    // 2. Teleport them back out to the front door
+    router.push("/login");
+  };
+
   const filteredBooks = books.filter(
     (book) =>
       book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -154,20 +163,33 @@ export default function BookCatalog() {
   return (
     <div className="p-8 max-w-5xl mx-auto font-sans relative">
       <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Library Catalog</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage and track library inventory</p>
+          {/* Left Side: Title and Subtitle */}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Library Catalog</h1>
+            <p className="text-gray-500 text-sm mt-1">Manage and track library inventory</p>
+          </div>
+          
+          {/* Right Side: Grouping the buttons together with a gap */}
+          <div className="flex items-center gap-4">
+            {/* The existing Add Book button (Only for librarians) */}
+            {userRole === 'librarian' && (
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-black text-white px-5 py-2.5 rounded-lg font-medium hover:bg-gray-800"
+              >
+                + Add New Book
+              </button>
+            )}
+
+            {/* The NEW Log Out button (For everyone) */}
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors font-medium border border-red-100"
+            >
+              Log Out
+            </button>
+          </div>
         </div>
-        {/* NEW: Only librarians can see this button! */}
-        {userRole === 'librarian' && (
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-black text-white px-5 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition-colors shadow-sm"
-          >
-            + Add New Book
-          </button>
-        )}
-      </div>
 
       <div className="mb-6">
         <input
