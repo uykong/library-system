@@ -29,6 +29,7 @@ export default function BookCatalog() {
   });
   const [userRole, setUserRole] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const router = useRouter();
 
   // NEW: Fetch books from Supabase when the component loads
@@ -47,6 +48,7 @@ export default function BookCatalog() {
 
     setUserRole(role);
     setUserId(id);
+    setIsCheckingAuth(false);
 
     async function loadBooks() {
       const data = await getBooks();
@@ -140,6 +142,14 @@ export default function BookCatalog() {
     setIsModalOpen(false); 
     setNewBook({ title: "", author: "", isbn: "", totalCopies: 1 });
   };
+
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-500 animate-pulse">Securing connection...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-5xl mx-auto font-sans relative">
