@@ -41,9 +41,9 @@ export default function BookCatalog() {
     // 2. Grab their specific ID to put on the borrow receipt
     const id = localStorage.getItem("userId");
 
-    if (!id) {
+    if (!id || id === "null" || id === "undefined" || id === "") {
       router.push("/login");
-      return; // Stop the function here so it doesn't bother loading books
+      return; 
     }
 
     setUserRole(role);
