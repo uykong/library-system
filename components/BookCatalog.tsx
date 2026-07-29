@@ -55,7 +55,7 @@ export default function BookCatalog() {
       setBooks(data);
     }
     loadBooks();
-  }, []);
+  }, [router]);
 
   const filteredBooks = books.filter(
     (book) =>
